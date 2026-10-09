@@ -9,8 +9,8 @@ export default async function handler(req,res){
     const {data,mime,name}=req.body||{};
     const allowed=['image/jpeg','image/png','image/webp','application/pdf'];
     if(!allowed.includes(mime)||typeof data!=='string'||!/^[-A-Za-z0-9+/]*={0,2}$/.test(data))return res.status(400).json({error:'Use a JPEG, PNG, WebP or PDF.'});
-    if(data.length>5_600_000)return res.status(413).json({error:'File too large. Use a file under 4 MB.'});
-    const bytes=Buffer.from(data,'base64');if(!bytes.length||bytes.length>4*1024*1024)return res.status(413).json({error:'File must be under 4 MB.'});
+    if(data.length>3_400_000)return res.status(413).json({error:'File too large. Use a file under 2.5 MB.'});
+    const bytes=Buffer.from(data,'base64');if(!bytes.length||bytes.length>2.5*1024*1024)return res.status(413).json({error:'File must be under 4 MB.'});
     const isPdf=mime==='application/pdf';
     const content=isPdf?{type:'input_file',filename:String(name||'quotation.pdf').replace(/[^a-zA-Z0-9_.-]/g,'_'),file_data:'data:'+mime+';base64,'+data}:{type:'input_image',image_url:'data:'+mime+';base64,'+data,detail:'high'};
     const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),55000);
